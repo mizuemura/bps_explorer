@@ -1,5 +1,5 @@
 # Raw BPS downloads
-data/raw/
+data/raw/bps/
 
 # Intermediate parsed CSVs (not needed by the app)
 data/processed/bps/*_rawparsed.csv
