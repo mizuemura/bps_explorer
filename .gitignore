@@ -1,11 +1,11 @@
 # Raw BPS downloads
-data/raw/bps/
+BPS/data/raw/bps/
 
 # Intermediate parsed CSVs (not needed by the app)
-data/processed/bps/*_rawparsed.csv
+BPS/data/processed/bps/*_rawparsed.csv
 
 # Generated HTML outputs
-outputs/
+BPS/outputs/
 
 # NPDP / GIS files unrelated to BPS explorer
 Export_gis_CA/
@@ -17,7 +17,7 @@ zipped/
 csv_output2/
 
 # Misc project files
-"NPDP user manual.pdf"
+NPDP user manual.pdf
 Screenshot*.png
 county_FIPS_codes_ALL.txt
 npdp_extraction.py
