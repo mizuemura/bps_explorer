@@ -38,14 +38,14 @@ CBSA_CSV   = PROCESSED / "bps_cbsa_annual_2004_2024.csv"
 YEARS = list(range(2000, 2026))
 
 METRICS: dict[str, str] = {
-    "single_family_units": "Single-Family Units",
-    "total_units":          "Total Units",
-    "single_family_share":  "SF Share of All Permits",
-    "yoy_percent_change":   "Year-over-Year % Change",
-    "rolling_3yr_avg":      "3-Year Rolling Average",
+    "single_family_units":  "Single-Family Units",
     "single_family_value":  "SF Valuation ($1,000s)",
+    "single_family_share":  "SF Share of All Permits",
     "multifamily_units":    "Multifamily Units",
     "multifamily_value":    "Multifamily Valuation ($1,000s)",
+    "total_units":          "Total Units",
+    "yoy_percent_change":   "Year-over-Year % Change",
+    "rolling_3yr_avg":      "3-Year Rolling Average",
     "total_value":          "Total Valuation ($1,000s)",
 }
 
@@ -656,40 +656,71 @@ def page_national_state() -> None:
 
 
 def _national_chart(df_state: pd.DataFrame, metric: str) -> None:
+    # Sum additive columns across all states per year
+    additive = ["single_family_units", "total_units", "single_family_value",
+                "multifamily_units", "multifamily_value", "total_value"]
+    agg_dict = {c: (c, "sum") for c in additive if c in df_state.columns}
+    nat = df_state.groupby("year", as_index=False).agg(**agg_dict).sort_values("year")
+
+    # Recompute derived metrics from national totals
+    if "single_family_units" in nat.columns and "total_units" in nat.columns:
+        nat["single_family_share"] = nat["single_family_units"] / nat["total_units"]
+    if "single_family_units" in nat.columns:
+        nat["rolling_3yr_avg"]     = nat["single_family_units"].rolling(3, min_periods=3).mean()
+        nat["yoy_percent_change"]  = nat["single_family_units"].pct_change() * 100
+
+    y_col  = metric if metric in nat.columns else "single_family_units"
+    y_data = nat[y_col]
+    y_fmt  = _metric_fmt(metric)
+    y_label = METRICS[metric]
+
+    # Rolling avg of the selected metric (for the overlay line)
+    rolling = y_data.rolling(3, min_periods=3).mean()
+
+    is_pct = metric in {"single_family_share", "yoy_percent_change"}
+    bar_fmt = f"%{{y:{y_fmt}}}" + ("%" if "percent" in metric else "")
+
     st.caption(
-        "Single-family permits aggregated across all 50 states + DC. "
-        "Bar = annual total; red line = 3-year rolling average."
+        f"{y_label} aggregated across all 50 states + DC. "
+        "Bar = annual value; red line = 3-year rolling average."
     )
-    nat = (
-        df_state.groupby("year", as_index=False)["single_family_units"]
-        .sum().sort_values("year")
-    )
-    nat["rolling_3yr"] = nat["single_family_units"].rolling(3, min_periods=3).mean().round(0)
 
     fig = go.Figure()
     fig.add_trace(go.Bar(
-        x=nat["year"], y=nat["single_family_units"],
-        name="Annual SF Units", marker_color="#4e8fd9", opacity=0.7,
-        hovertemplate="Year: %{x}<br>SF Units: %{y:,.0f}<extra></extra>",
+        x=nat["year"], y=y_data,
+        name=y_label, marker_color="#4e8fd9", opacity=0.7,
+        hovertemplate=f"Year: %{{x}}<br>{y_label}: {bar_fmt}<extra></extra>",
     ))
     fig.add_trace(go.Scatter(
-        x=nat["year"], y=nat["rolling_3yr"],
+        x=nat["year"], y=rolling,
         name="3-Year Rolling Avg", mode="lines",
         line=dict(color="#c0392b", width=2.5),
-        hovertemplate="3-yr avg: %{y:,.0f}<extra></extra>",
+        hovertemplate=f"3-yr avg: {bar_fmt}<extra></extra>",
     ))
-    peak = nat.loc[nat["single_family_units"].idxmax()]
-    fig.add_annotation(
-        x=peak["year"], y=peak["single_family_units"],
-        text=f"Peak: {int(peak['single_family_units']):,}",
-        showarrow=True, arrowhead=2, arrowcolor="#555",
-        ax=30, ay=-40, font=dict(size=11, color="#555"),
-    )
+
+    valid = y_data.dropna()
+    if not valid.empty:
+        peak_idx = valid.abs().idxmax()
+        peak_x   = nat.loc[peak_idx, "year"]
+        peak_y   = valid[peak_idx]
+        peak_txt = (
+            f"Peak: {peak_y:.1%}" if metric == "single_family_share"
+            else f"Peak: {peak_y:+.1f}%" if metric == "yoy_percent_change"
+            else f"Peak: {int(peak_y):,}"
+        )
+        fig.add_annotation(
+            x=peak_x, y=peak_y,
+            text=peak_txt,
+            showarrow=True, arrowhead=2, arrowcolor="#555",
+            ax=30, ay=-40, font=dict(size=11, color="#555"),
+        )
+
+    ytick_fmt = y_fmt.replace("+", "")
     fig.update_layout(
-        title="U.S. Single-Family Housing Permits, 2000–2025",
+        title=f"U.S. {y_label}, 2000–2025",
         xaxis=dict(title="Year", tickmode="linear", dtick=2,
                    showgrid=True, gridcolor="#e8e8e8"),
-        yaxis=dict(title="SF Units Authorized", tickformat=",",
+        yaxis=dict(title=y_label, tickformat=ytick_fmt,
                    showgrid=True, gridcolor="#e8e8e8", zeroline=False),
         shapes=RECESSION_SHAPES,
         hovermode="x unified",

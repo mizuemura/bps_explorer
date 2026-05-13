@@ -1,0 +1,4 @@
+geo_level,status,rows_in,duplicate_pairs_removed,rows_out,unique_geographies,years_covered,missing_year_instances,qc_null_geography_id,qc_null_sf_units,qc_negative_sf_units,qc_sf_gt_total_units,qc_null_total_units
+state,ok,1664,0,1314,53,25,64,0,0,0,0,0
+county,ok,75719,10,75583,3090,25,4757,0,0,0,0,0
+cbsa,ok,9796,414,8388,944,21,12990,0,0,0,0,0

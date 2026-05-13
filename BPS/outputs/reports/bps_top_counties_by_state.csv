@@ -1,0 +1,41 @@
+state_fips,state_name,full_county_fips,geography_name,cumulative_sf_units
+48,Texas,48201,Harris County,489518.0
+48,Texas,48085,Collin County,225514.0
+48,Texas,48439,Tarrant County,219499.0
+48,Texas,48157,Fort Bend County,165932.0
+48,Texas,48453,Travis County,161367.0
+48,Texas,48339,Montgomery County,151938.0
+48,Texas,48113,Dallas County,149337.0
+48,Texas,48029,Bexar County,135253.0
+48,Texas,48121,Denton County,119022.0
+48,Texas,48491,Williamson County,110277.0
+12,Florida,12071,Lee County,167125.0
+12,Florida,12057,Hillsborough County,165371.0
+12,Florida,12095,Orange County,142635.0
+12,Florida,12105,Polk County,129314.0
+12,Florida,12099,Palm Beach County,105345.0
+12,Florida,12031,Duval County,100809.0
+12,Florida,12101,Pasco County,98818.0
+12,Florida,12097,Osceola County,95926.0
+12,Florida,12086,Miami-Dade County,90529.0
+12,Florida,12109,St. Johns County,83480.0
+06,California,06065,Riverside County,267054.0
+06,California,06037,Los Angeles County,167413.0
+06,California,06071,San Bernardino County,129077.0
+06,California,06073,San Diego County,110275.0
+06,California,06067,Sacramento County,105104.0
+06,California,06059,Orange County,91530.0
+06,California,06077,San Joaquin County,73145.0
+06,California,06029,Kern County,72197.0
+06,California,06019,Fresno County,70847.0
+06,California,06061,Placer County,68883.0
+37,North Carolina,37183,Wake County,194028.0
+37,North Carolina,37119,Mecklenburg County,143397.0
+37,North Carolina,37019,Brunswick County,68388.0
+37,North Carolina,37081,Guilford County,50364.0
+37,North Carolina,37179,Union County,50153.0
+37,North Carolina,37067,Forsyth County,46870.0
+37,North Carolina,37101,Johnston County,44997.0
+37,North Carolina,37063,Durham County,41330.0
+37,North Carolina,37025,Cabarrus County,39074.0
+37,North Carolina,37097,Iredell County,34981.0

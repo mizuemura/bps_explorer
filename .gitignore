@@ -4,8 +4,8 @@ BPS/data/raw/bps/
 # Intermediate parsed CSVs (not needed by the app)
 BPS/data/processed/bps/*_rawparsed.csv
 
-# Generated HTML outputs
-BPS/outputs/
+# Generated HTML outputs (large files, not needed by app)
+BPS/outputs/figures/
 
 # NPDP / GIS files unrelated to BPS explorer
 Export_gis_CA/
